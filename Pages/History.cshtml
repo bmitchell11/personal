@@ -1,0 +1,44 @@
+@page
+@model FinalProject.Pages.HistoryModel
+@{
+    ViewData["Title"] = "Package History";
+}
+
+<h2>Package History</h2>
+
+<form method="post">
+    <label>Resident Name:</label>
+    <input asp-for="Name" />
+    <br />
+    <label>Unit Number:</label>
+    <input asp-for="UnitNumber" />
+    <br />
+    <button type="submit">Search</button>
+</form>
+
+@if (Model.Packages != null && Model.Packages.Count > 0)
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Tracking #</th>
+                <th>Resident</th>
+                <th>Status</th>
+                <th>Received Date</th>
+                <th>Pickup Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in Model.Packages)
+            {
+                <tr>
+                    <td>@p.TrackingNumber</td>
+                    <td>@p.Resident?.FullName</td>
+                    <td>@p.Status</td>
+                    <td>@p.ReceivedDate</td>
+                    <td>@p.PickupDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

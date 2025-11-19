@@ -1,0 +1,22 @@
+@page
+@model FinalProject.Pages.DeliverModel
+@{
+    ViewData["Title"] = "Deliver Package";
+}
+
+<h2>Deliver Package</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form method="post">
+    <label>Resident:</label>
+    <select asp-for="ResidentID" asp-items="@(new SelectList(Model.Residents, "Id", "FullName"))"></select>
+    <br />
+    <label>Tracking Number:</label>
+    <input asp-for="TrackingNumber" />
+    <br />
+    <button type="submit">Submit</button>
+</form>

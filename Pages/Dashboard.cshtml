@@ -1,0 +1,13 @@
+@page
+@model FinalProject.Pages.DashboardModel
+@{
+    ViewData["Title"] = "Dashboard";
+}
+
+<h2>Dashboard</h2>
+<ul>
+    <li><a asp-page="/Deliver">Deliver Package</a></li>
+    <li><a asp-page="/Pickup">Pickup Package</a></li>
+    <li><a asp-page="/History">Package History</a></li>
+    <li><a asp-page="/UnknownPackage">Log Unknown Package</a></li>
+</ul>

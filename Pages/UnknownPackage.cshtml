@@ -1,0 +1,22 @@
+@page
+@model FinalProject.Pages.UnknownPackageModel
+@{
+    ViewData["Title"] = "Log Unknown Package";
+}
+
+<h2>Log Unknown Package</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<form method="post">
+    <label>Name on Package:</label>
+    <input asp-for="NameOnPackage" />
+    <br />
+    <label>Postal Service:</label>
+    <input asp-for="PostalService" />
+    <br />
+    <button type="submit">Submit</button>
+</form>

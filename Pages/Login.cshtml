@@ -1,0 +1,22 @@
+@page
+@model FinalProject.Pages.LoginModel
+@{
+    ViewData["Title"] = "Staff Login";
+}
+
+<h2>Staff Login</h2>
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <div class="alert alert-danger">@Model.ErrorMessage</div>
+}
+
+<form method="post">
+    <label>Username:</label>
+    <input asp-for="Username" />
+    <br />
+    <label>Password:</label>
+    <input type="password" asp-for="Password" />
+    <br />
+    <button type="submit">Login</button>
+</form>
