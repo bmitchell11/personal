@@ -8,7 +8,7 @@ namespace FinalProject.Models
     {
         [Key]
         [Column("id")]
-        public int Id { get; set; }
+        public int ResidentID { get; set; }
 
         [Required]
         [Column("full_name")]

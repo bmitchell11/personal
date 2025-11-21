@@ -1,22 +1,35 @@
 @page
 @model FinalProject.Pages.LoginModel
 @{
-    ViewData["Title"] = "Staff Login";
+    ViewData["Title"] = "Login";
 }
 
-<h2>Staff Login</h2>
+<div class="d-flex justify-content-center align-items-center">
+    <div class="card shadow-lg p-4" style="width: 24rem; border-radius: 12px;">
+        
+        <h2 class="text-center mb-4">Login</h2>
 
-@if (!string.IsNullOrEmpty(Model.ErrorMessage))
-{
-    <div class="alert alert-danger">@Model.ErrorMessage</div>
-}
+        @if (!string.IsNullOrEmpty(Model.ErrorMessage))
+        {
+            <div class="alert alert-danger text-center">
+                @Model.ErrorMessage
+            </div>
+        }
 
-<form method="post">
-    <label>Username:</label>
-    <input asp-for="Username" />
-    <br />
-    <label>Password:</label>
-    <input type="password" asp-for="Password" />
-    <br />
-    <button type="submit">Login</button>
-</form>
+        <form method="post">
+            <div class="mb-3">
+                <label asp-for="Username" class="form-label"></label>
+                <input asp-for="Username" class="form-control" placeholder="Enter username" />
+                <span asp-validation-for="Username" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
+                <label asp-for="Password" class="form-label"></label>
+                <input asp-for="Password" class="form-control" type="password" placeholder="Enter password" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+    </div>
+</div>

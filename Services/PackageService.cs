@@ -8,7 +8,6 @@ namespace FinalProject.Services
     {
         private readonly ApplicationDbContext _db;
         private readonly EmailSender _email;
-
         public PackageService(ApplicationDbContext db, EmailSender email)
         {
             _db = db;
@@ -16,7 +15,7 @@ namespace FinalProject.Services
         }
 
         // Deliver a package
-        public async Task AddPackageAsync(int residentID, string trackingNumber)
+        public async Task AddPackageAsync(int residentID, string postalService)
         {
             var resident = await _db.Residents.FindAsync(residentID);
 
@@ -25,9 +24,8 @@ namespace FinalProject.Services
             var package = new Package
             {
                 ResidentID = residentID,
-                TrackingNumber = trackingNumber,
+                PostalService = postalService,
                 ReceivedDate = DateTime.Now,
-                Status = "Delivered"
             };
 
             _db.Packages.Add(package);
@@ -42,17 +40,31 @@ namespace FinalProject.Services
         }
 
         // Mark as picked up
-        public async Task MarkAsPickedUpAsync(string trackingNumber)
+        public List<Package> GetPendingPackages()
         {
-            var package = await _db.Packages.FirstOrDefaultAsync(p => p.TrackingNumber == trackingNumber);
+            return _db.Packages
+                    .Include(p => p.Resident)
+                    .Where(p => p.Status == false) // false = not picked up
+                    .ToList();
+        }
+        public async Task<bool> MarkAsPickedUpAsync(int residentID, string postalService)
+        {
+            // Find the pending package for this resident
+            var package = await _db.Packages
+                .FirstOrDefaultAsync(p => p.ResidentID == residentID 
+                                    && p.PostalService == postalService 
+                                    && p.Status == false); // only pending packages
 
-            if (package == null) return;
+            if (package == null) 
+                return false;
 
-            package.Status = "Picked Up";
             package.PickupDate = DateTime.Now;
+            package.Status = true; // mark as picked up
 
             await _db.SaveChangesAsync();
+            return true;
         }
+
 
         // Add unknown package
         public void AddUnknownPackage(string nameOnPackage, string postalService)
@@ -66,20 +78,6 @@ namespace FinalProject.Services
 
             _db.UnknownPackages.Add(unknownPackage);
             _db.SaveChanges();
-        }
-
-        // Search history by resident name/unit
-        public List<Package> SearchHistory(string? name, int? unitNumber)
-        {
-            var query = _db.Packages.Include(p => p.Resident).AsQueryable();
-
-            if (!string.IsNullOrEmpty(name))
-                query = query.Where(p => p.Resident.FullName.Contains(name));
-
-            if (unitNumber.HasValue)
-                query = query.Where(p => p.Resident.UnitNumber == unitNumber.Value);
-
-            return query.ToList();
         }
     }
 }

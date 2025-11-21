@@ -5,7 +5,7 @@ using FinalProject.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services.AddRazorPages();
 
 // MySQL Database Connection
@@ -30,9 +30,12 @@ builder.Services.AddSession(options =>
     options.Cookie.IsEssential = true;
 });
 
+// Make HttpContext accessible in Razor pages/layout
+builder.Services.AddHttpContextAccessor();
+
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Error");
@@ -40,11 +43,25 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
-app.UseStaticFiles(); // serve wwwroot files
+app.UseStaticFiles();
 
 app.UseRouting();
+
+// Important: Session middleware must come before MapRazorPages
+app.UseSession();
+
 app.UseAuthorization();
-app.UseSession(); // enable session middleware
+
+// Redirect root "/" depending on login status
+app.MapGet("/", async context =>
+{
+    var user = context.Session.GetString("User");
+    if (!string.IsNullOrEmpty(user))
+        context.Response.Redirect("/Dashboard");
+    else
+        context.Response.Redirect("/Login");
+    await Task.CompletedTask;
+});
 
 // Map Razor Pages
 app.MapRazorPages();

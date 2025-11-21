@@ -22,7 +22,7 @@ namespace FinalProject.Data.Repositories
         {
             return _context.Packages
                 .Include(p => p.Resident)
-                .FirstOrDefault(p => p.TrackingNumber == tracking);
+                .FirstOrDefault(p => p.PostalService == tracking);
         }
 
         public void Update(Package pkg)

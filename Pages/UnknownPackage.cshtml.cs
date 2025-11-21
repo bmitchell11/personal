@@ -1,6 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.AspNetCore.Mvc; 
-using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using FinalProject.Data;
 using FinalProject.Models;
 using FinalProject.Services;
@@ -9,11 +9,11 @@ namespace FinalProject.Pages
 {
     public class UnknownPackageModel : PageModel
     {
-        private readonly PackageService _packageService;
+        private readonly ApplicationDbContext _db;
 
-        public UnknownPackageModel(PackageService packageService)
+        public UnknownPackageModel(ApplicationDbContext db)
         {
-            _packageService = packageService;
+            _db = db;
         }
 
         [BindProperty]
@@ -22,12 +22,41 @@ namespace FinalProject.Pages
         [BindProperty]
         public string PostalService { get; set; } = string.Empty;
 
-        public void OnGet() { }
+        public List<UnknownPackage> UnknownPackages { get; set; } = new List<UnknownPackage>();
+
+        public List<SelectListItem> PostalServiceOptions { get; set; } = new List<SelectListItem>
+        {
+            new SelectListItem("USPS", "USPS"),
+            new SelectListItem("FedEx", "FedEx"),
+            new SelectListItem("UPS", "UPS")
+        };
+
+        public void OnGet()
+        {
+            UnknownPackages = _db.UnknownPackages
+                                .OrderByDescending(u => u.DeliveredDate)
+                                .ToList();
+        }
 
         public IActionResult OnPost()
         {
-            _packageService.AddUnknownPackage(NameOnPackage, PostalService);
-            TempData["Message"] = "Unknown package logged!";
+            if (string.IsNullOrEmpty(NameOnPackage) || string.IsNullOrEmpty(PostalService))
+            {
+                TempData["Message"] = "Please enter both name and postal service.";
+                return RedirectToPage();
+            }
+
+            var unknownPackage = new UnknownPackage
+            {
+                NameOnPackage = NameOnPackage,
+                PostalService = PostalService,
+                DeliveredDate = DateTime.Now
+            };
+
+            _db.UnknownPackages.Add(unknownPackage);
+            _db.SaveChanges();
+
+            TempData["Message"] = "Unknown package logged successfully!";
             return RedirectToPage();
         }
     }

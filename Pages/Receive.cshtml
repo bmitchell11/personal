@@ -1,0 +1,38 @@
+@page
+@model FinalProject.Pages.ReceiveModel
+@{
+    ViewData["Title"] = "Receive Package";
+}
+
+<div class="container mt-5">
+
+    <h2 class="mb-4 text-center">Receive Package</h2>
+
+    <div class="d-flex justify-content-center mb-4">
+        <a asp-page="/Receive" class="btn btn-primary mx-2 disabled">Receive Package</a>
+        <a asp-page="/Dashboard" class="btn btn-primary mx-2">Pending Packages</a>
+        <a asp-page="/History" class="btn btn-primary mx-2">Package History</a>
+        <a asp-page="/UnknownPackage" class="btn btn-primary mx-2">Unknown Packages</a>
+        <a asp-page="/Logout" class="btn btn-danger mx-2">Logout</a>
+    </div>
+
+    @if (TempData["Message"] != null)
+    {
+        <div class="alert alert-success text-center">@TempData["Message"]</div>
+    }
+
+    <form method="post" class="mx-auto" style="max-width: 500px;">
+        <div class="mb-3">
+            <label>Resident:</label>
+            <select asp-for="ResidentID" asp-items="@(new SelectList(Model.Residents, "ResidentID", "FullName"))" class="form-select"></select>
+        </div>
+        <div class="mb-3">
+            <label>Postal Service:</label>
+            <select asp-for="PostalService" class="form-select" asp-items="Model.PostalServiceOptions">
+                <option value="">-- Select Postal Service --</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary w-100">Submit</button>
+    </form>
+
+</div>
